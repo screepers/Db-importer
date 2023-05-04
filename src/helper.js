@@ -34,10 +34,10 @@ export default class Helper {
   async getUsers() {
     try {
       const usersResponse = await fetch(
-        `http://${hostname}:${serverPort}/api/stats/users`,
+        `http://${this.hostname}:${this.serverPort}/api/stats/users`,
         {
           headers: {
-            key: secret,
+            key: this.secret,
           },
         }
       );
@@ -97,7 +97,7 @@ export default class Helper {
 
   async executeCliCommand(command) {
     try {
-      const result = await fetch(`http://${hostname}:${cliPort}/cli`, {
+      const result = await fetch(`http://${this.hostname}:${this.cliPort}/cli`, {
         method: "POST",
         body: command,
         headers: { "Content-Type": "text/plain" },
