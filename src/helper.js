@@ -20,7 +20,7 @@ if (process.env.NODE_ENV !== "production") {
 
 export default class Helper {
   hostname = "localhost"
-  serverPort  = 21025
+  serverPort = 21025
   cliPort = 21026
   secret = "secret"
 
@@ -31,27 +31,32 @@ export default class Helper {
     if (settings.secret) this.secret = settings.secret;
   }
 
-   async getUsers() {
-    const usersResponse = await fetch(
-      `http://${hostname}:${serverPort}/api/stats/users`,
-      {
-        headers: {
-          key: secret,
-        },
+  async getUsers() {
+    try {
+      const usersResponse = await fetch(
+        `http://${hostname}:${serverPort}/api/stats/users`,
+        {
+          headers: {
+            key: secret,
+          },
+        }
+      );
+      const users = await usersResponse.json();
+
+      const mappedUsers = {};
+      for (let u = 0; u < users.length; u += 1) {
+        const user = users[u];
+        mappedUsers[user.username] = user._id;
       }
-    );
-    const users = await usersResponse.json();
 
-    const mappedUsers = {};
-    for (let u = 0; u < users.length; u += 1) {
-      const user = users[u];
-      mappedUsers[user.username] = user._id;
+      return mappedUsers;
+    } catch (error) {
+      console.log(error)
+      return {}
     }
-
-    return mappedUsers;
   }
 
-   convertList(users, collectionList) {
+  convertList(users, collectionList) {
     Object.entries(collectionList).forEach(([collection, list]) => {
       list.forEach((item) => {
         if (item.username) {
@@ -66,7 +71,7 @@ export default class Helper {
     return collectionList;
   }
 
-   async executeList(collectionList) {
+  async executeList(collectionList) {
     const users = await this.getUsers();
     // eslint-disable-next-line no-param-reassign
     collectionList = this.convertList(users, collectionList);
@@ -85,12 +90,12 @@ export default class Helper {
     }
   }
 
-   sleep(seconds) {
+  sleep(seconds) {
     // eslint-disable-next-line no-promise-executor-return
     return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
   }
 
-   async executeCliCommand(command) {
+  async executeCliCommand(command) {
     try {
       const result = await fetch(`http://${hostname}:${cliPort}/cli`, {
         method: "POST",
