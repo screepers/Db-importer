@@ -60,7 +60,6 @@ export default class Helper {
     Object.entries(collectionList).forEach(([collection, list]) => {
       list.forEach((item) => {
         if (item.username) {
-          console.log(item.username, users[item.username]);
           item.user = users[item.username];
           delete item.username;
         }
@@ -105,7 +104,7 @@ export default class Helper {
       const text = await result.text();
       console.log(`> ${command}`);
 
-      logger.debug(`> ${command} \r\n> ${text}`);
+      // logger.debug(`> ${command} \r\n> ${text}`);
       await this.sleep(1);
       return text;
     } catch (error) {
